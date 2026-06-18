@@ -1,5 +1,6 @@
-from sentence_transformers import util
-from agents.model_loader import model
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 def detect_contradiction(sources):
 
@@ -10,21 +11,36 @@ def detect_contradiction(sources):
             source["content"]
         )
 
+
+    if len(contents) < 2:
+        return "Not enough sources to compare"
+
+
+    vectorizer = TfidfVectorizer()
+
+    vectors = vectorizer.fit_transform(
+        contents
+    )
+
+
+    similarity_matrix = cosine_similarity(
+        vectors
+    )
+
+
     similarities = []
+
 
     for i in range(len(contents)):
         for j in range(i + 1, len(contents)):
 
-            similarity = util.cos_sim(
-                model.encode(contents[i]),
-                model.encode(contents[j])
+            similarities.append(
+                similarity_matrix[i][j]
             )
 
-            similarities.append(
-                similarity.item()
-            )
 
     average_similarity = sum(similarities) / len(similarities)
+
 
     if average_similarity > 0.8:
         return "High agreement"

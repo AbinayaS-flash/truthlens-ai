@@ -1,5 +1,6 @@
-from sentence_transformers import util
-from agents.model_loader import model
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 def fact_check(answer, sources):
 
@@ -8,25 +9,36 @@ def fact_check(answer, sources):
     for source in sources:
         source_text += source["content"] + " "
 
-    answer_embedding = model.encode(
-        answer,
-        convert_to_tensor=True
+
+    if not source_text.strip():
+        return {
+            "fact_check_score": 0,
+            "fact_check_status": "No sources available"
+        }
+
+
+    vectorizer = TfidfVectorizer()
+
+
+    vectors = vectorizer.fit_transform(
+        [
+            answer,
+            source_text
+        ]
     )
 
-    source_embedding = model.encode(
-        source_text,
-        convert_to_tensor=True
-    )
 
-    similarity = util.cos_sim(
-        answer_embedding,
-        source_embedding
-    ).item()
+    similarity = cosine_similarity(
+        vectors[0:1],
+        vectors[1:2]
+    )[0][0]
+
 
     similarity = round(
         similarity * 100,
         2
     )
+
 
     if similarity >= 80:
 
@@ -39,6 +51,7 @@ def fact_check(answer, sources):
     else:
 
         status = "Unsupported claim detected"
+
 
     return {
         "fact_check_score": similarity,
