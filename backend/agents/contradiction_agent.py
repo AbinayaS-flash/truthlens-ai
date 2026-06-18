@@ -1,16 +1,35 @@
+from sentence_transformers import util
+from agents.model_loader import model
+
 def detect_contradiction(sources):
 
-    trust_scores = []
+    contents = []
 
     for source in sources:
-        trust_scores.append(source["trust_score"])
+        contents.append(
+            source["content"]
+        )
 
-    average = sum(trust_scores) / len(trust_scores)
+    similarities = []
 
-    if average >= 4:
+    for i in range(len(contents)):
+        for j in range(i + 1, len(contents)):
+
+            similarity = util.cos_sim(
+                model.encode(contents[i]),
+                model.encode(contents[j])
+            )
+
+            similarities.append(
+                similarity.item()
+            )
+
+    average_similarity = sum(similarities) / len(similarities)
+
+    if average_similarity > 0.8:
         return "High agreement"
 
-    elif average >= 3:
+    elif average_similarity > 0.6:
         return "Moderate agreement"
 
     else:

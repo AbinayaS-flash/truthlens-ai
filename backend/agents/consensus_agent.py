@@ -1,13 +1,44 @@
+from sentence_transformers import util
+from agents.model_loader import model
+
+
 def calculate_consensus(sources):
 
-    trust_scores = []
+    contents = [
+        source["content"]
+        for source in sources
+    ]
 
-    for source in sources:
-        trust_scores.append(source["trust_score"])
+    similarities = []
 
-    average = sum(trust_scores) / len(trust_scores)
+    for i in range(len(contents)):
+        for j in range(i + 1, len(contents)):
 
-    consensus_score = round((average / 5) * 100, 2)
+            emb1 = model.encode(
+                contents[i]
+            )
+
+            emb2 = model.encode(
+                contents[j]
+            )
+
+            similarity = util.cos_sim(
+                emb1,
+                emb2
+            )
+
+            similarities.append(
+                similarity.item()
+            )
+
+    average_similarity = (
+        sum(similarities) / len(similarities)
+    )
+
+    consensus_score = round(
+        average_similarity * 100,
+        2
+    )
 
     if consensus_score >= 80:
         agreement = "High"
