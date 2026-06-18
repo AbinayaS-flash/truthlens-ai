@@ -16,4 +16,4 @@ nltk
 
 tiktoken
 
-sentence-transformers
+scikit-learn

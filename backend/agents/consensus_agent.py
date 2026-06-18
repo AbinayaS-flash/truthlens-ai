@@ -1,55 +1,23 @@
-from sentence_transformers import util
-from agents.model_loader import model
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 def calculate_consensus(sources):
 
     contents = [
-        source["content"]
-        for source in sources
+        s["content"]
+        for s in sources
     ]
 
-    similarities = []
+    vectorizer = TfidfVectorizer()
 
-    for i in range(len(contents)):
-        for j in range(i + 1, len(contents)):
+    vectors = vectorizer.fit_transform(contents)
 
-            emb1 = model.encode(
-                contents[i]
-            )
+    similarity = cosine_similarity(vectors)
 
-            emb2 = model.encode(
-                contents[j]
-            )
-
-            similarity = util.cos_sim(
-                emb1,
-                emb2
-            )
-
-            similarities.append(
-                similarity.item()
-            )
-
-    average_similarity = (
-        sum(similarities) / len(similarities)
-    )
-
-    consensus_score = round(
-        average_similarity * 100,
-        2
-    )
-
-    if consensus_score >= 80:
-        agreement = "High"
-
-    elif consensus_score >= 60:
-        agreement = "Moderate"
-
-    else:
-        agreement = "Low"
+    score = similarity.mean() * 100
 
     return {
-        "consensus_score": consensus_score,
-        "agreement_level": agreement
+        "consensus_score": round(score,2),
+        "agreement_level": "High" if score > 80 else "Moderate"
     }
