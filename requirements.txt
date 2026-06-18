@@ -2,7 +2,6 @@ fastapi
 python-dotenv
 
 httpx
-requests
 
 langgraph
 langchain
