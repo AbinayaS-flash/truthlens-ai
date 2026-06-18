@@ -13,6 +13,7 @@ from agents.bias_agent import detect_bias
 from agents.confidence_agent import calculate_confidence
 from agents.explanation_agent import explain
 
+
 def search_node(state):
 
     results = search_sources(
@@ -23,6 +24,7 @@ def search_node(state):
         "results": results
     }
 
+
 def verify_node(state):
 
     verified = verify_sources(
@@ -32,6 +34,7 @@ def verify_node(state):
     return {
         "verified": verified
     }
+
 
 def answer_node(state):
 
@@ -44,6 +47,7 @@ def answer_node(state):
         "answer": answer
     }
 
+
 def hallucination_node(state):
 
     hallucination = detect_hallucination(
@@ -55,6 +59,7 @@ def hallucination_node(state):
         "hallucination_check": hallucination
     }
 
+
 def contradiction_node(state):
 
     contradiction = detect_contradiction(
@@ -64,6 +69,7 @@ def contradiction_node(state):
     return {
         "contradiction_check": contradiction
     }
+
 
 def consensus_node(state):
 
@@ -76,6 +82,7 @@ def consensus_node(state):
         "agreement_level": consensus["agreement_level"]
     }
 
+
 def fact_check_node(state):
 
     result = fact_check(
@@ -87,6 +94,7 @@ def fact_check_node(state):
         "fact_check_score": result["fact_check_score"],
         "fact_check_status": result["fact_check_status"]
     }
+
 
 def bias_node(state):
 
@@ -103,6 +111,7 @@ def bias_node(state):
         "bias": bias
     }
 
+
 def confidence_node(state):
 
     confidence = calculate_confidence(
@@ -112,6 +121,7 @@ def confidence_node(state):
     return {
         "confidence": confidence
     }
+
 
 def explanation_node(state):
 
@@ -124,111 +134,118 @@ def explanation_node(state):
         "explanation": explanation
     }
 
+
+# ---------------- GRAPH ---------------- #
+
 builder = StateGraph(
     TruthLensState
 )
 
 builder.add_node(
-    "search",
+    "search_node",
     search_node
 )
 
 builder.add_node(
-    "verify",
+    "verify_node",
     verify_node
 )
 
 builder.add_node(
-    "answer",
+    "answer_node",
     answer_node
 )
 
 builder.add_node(
-    "hallucination",
+    "hallucination_node",
     hallucination_node
 )
 
 builder.add_node(
-    "contradiction",
+    "contradiction_node",
     contradiction_node
 )
 
 builder.add_node(
-    "consensus",
+    "consensus_node",
     consensus_node
 )
 
 builder.add_node(
-    "fact_check",
+    "fact_check_node",
     fact_check_node
 )
 
 builder.add_node(
-    "bias",
+    "bias_node",
     bias_node
 )
 
 builder.add_node(
-    "confidence",
+    "confidence_node",
     confidence_node
 )
 
 builder.add_node(
-    "explanation",
+    "explanation_node",
     explanation_node
 )
 
+
 builder.set_entry_point(
-    "search"
+    "search_node"
+)
+
+
+builder.add_edge(
+    "search_node",
+    "verify_node"
 )
 
 builder.add_edge(
-    "search",
-    "verify"
+    "verify_node",
+    "answer_node"
 )
 
 builder.add_edge(
-    "verify",
-    "answer"
+    "answer_node",
+    "hallucination_node"
 )
 
 builder.add_edge(
-    "answer",
-    "hallucination"
+    "hallucination_node",
+    "contradiction_node"
 )
 
 builder.add_edge(
-    "hallucination",
-    "contradiction"
+    "contradiction_node",
+    "consensus_node"
 )
 
 builder.add_edge(
-    "contradiction",
-    "consensus"
+    "consensus_node",
+    "fact_check_node"
 )
 
 builder.add_edge(
-    "consensus",
-    "fact_check"
+    "fact_check_node",
+    "bias_node"
 )
 
 builder.add_edge(
-    "fact_check",
-    "bias"
+    "bias_node",
+    "confidence_node"
 )
 
 builder.add_edge(
-    "bias",
-    "confidence"
+    "confidence_node",
+    "explanation_node"
 )
 
 builder.add_edge(
-    "confidence",
-    "explanation"
-)
-
-builder.add_edge(
-    "explanation",
+    "explanation_node",
     END
 )
+
+
 graph = builder.compile()

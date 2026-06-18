@@ -6,7 +6,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173", "http://localhost:5174"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -22,11 +22,13 @@ def home():
 
 @app.get("/truthlens")
 def truthlens(query: str):
-
-    result = graph.invoke(
-        {
-            "query": query
+    try:
+        return graph.invoke({"query": query})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {
+            "error": str(e)
         }
-    )
 
     return result
