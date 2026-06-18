@@ -1,19 +1,13 @@
 fastapi
-uvicorn
 python-dotenv
 
-requests
 httpx
+requests
 
 langgraph
 langchain
 
 groq
 tavily-python
-
-textblob
-nltk
-
-tiktoken
 
 scikit-learn
