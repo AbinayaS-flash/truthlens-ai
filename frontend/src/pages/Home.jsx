@@ -62,19 +62,10 @@ function Home() {
       );
 
       const response = await axios.get(
-
-        `${import.meta.env.VITE_API_URL}/truthlens`,
-
+        "https://truthlens-ai-4.onrender.com/truthlens",
         {
-
-          params: {
-
-            query
-
-          }
-
+          params: { query }
         }
-
       );
 
       console.log(
