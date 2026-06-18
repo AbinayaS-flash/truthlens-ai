@@ -1,5 +1,4 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from difflib import SequenceMatcher
 
 
 def detect_contradiction(sources):
@@ -16,27 +15,19 @@ def detect_contradiction(sources):
         return "Not enough sources to compare"
 
 
-    vectorizer = TfidfVectorizer()
-
-    vectors = vectorizer.fit_transform(
-        contents
-    )
-
-
-    similarity_matrix = cosine_similarity(
-        vectors
-    )
-
-
     similarities = []
 
 
     for i in range(len(contents)):
         for j in range(i + 1, len(contents)):
 
-            similarities.append(
-                similarity_matrix[i][j]
-            )
+            score = SequenceMatcher(
+                None,
+                contents[i],
+                contents[j]
+            ).ratio()
+
+            similarities.append(score)
 
 
     average_similarity = sum(similarities) / len(similarities)

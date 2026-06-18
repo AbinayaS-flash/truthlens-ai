@@ -1,23 +1,56 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from difflib import SequenceMatcher
 
 
 def calculate_consensus(sources):
 
     contents = [
-        s["content"]
-        for s in sources
+        source["content"]
+        for source in sources
     ]
 
-    vectorizer = TfidfVectorizer()
 
-    vectors = vectorizer.fit_transform(contents)
+    similarities = []
 
-    similarity = cosine_similarity(vectors)
 
-    score = similarity.mean() * 100
+    for i in range(len(contents)):
+        for j in range(i + 1, len(contents)):
+
+            score = SequenceMatcher(
+                None,
+                contents[i],
+                contents[j]
+            ).ratio()
+
+            similarities.append(score)
+
+
+    if not similarities:
+        return {
+            "consensus_score": 0,
+            "agreement_level": "Low"
+        }
+
+
+    avg = sum(similarities) / len(similarities)
+
+
+    consensus_score = round(
+        avg * 100,
+        2
+    )
+
+
+    if consensus_score >= 80:
+        level = "High"
+
+    elif consensus_score >= 60:
+        level = "Moderate"
+
+    else:
+        level = "Low"
+
 
     return {
-        "consensus_score": round(score,2),
-        "agreement_level": "High" if score > 80 else "Moderate"
+        "consensus_score": consensus_score,
+        "agreement_level": level
     }

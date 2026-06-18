@@ -8,5 +8,3 @@ langchain
 
 groq
 tavily-python
-
-scikit-learn
