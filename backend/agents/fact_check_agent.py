@@ -1,50 +1,24 @@
-from sentence_transformers import SentenceTransformer, util
-
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2"
-)
-
-
 def fact_check(answer, sources):
 
-    source_text = ""
+    trust_scores = []
 
     for source in sources:
-        source_text += source["content"] + " "
+        trust_scores.append(source["trust_score"])
 
-    answer_embedding = model.encode(
-        answer,
-        convert_to_tensor=True
-    )
+    average = sum(trust_scores) / len(trust_scores)
 
-    source_embedding = model.encode(
-        source_text,
-        convert_to_tensor=True
-    )
+    score = round((average / 5) * 100, 2)
 
-    similarity = util.cos_sim(
-        answer_embedding,
-        source_embedding
-    ).item()
-
-    similarity = round(
-        similarity * 100,
-        2
-    )
-
-    if similarity >= 80:
-
+    if score >= 80:
         status = "Verified"
 
-    elif similarity >= 60:
-
+    elif score >= 60:
         status = "Partially Supported"
 
     else:
-
         status = "Unsupported claim detected"
 
     return {
-        "fact_check_score": similarity,
+        "fact_check_score": score,
         "fact_check_status": status
     }

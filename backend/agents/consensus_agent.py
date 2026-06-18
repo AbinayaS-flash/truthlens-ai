@@ -1,47 +1,13 @@
-from sentence_transformers import SentenceTransformer, util
-
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2"
-)
-
-
 def calculate_consensus(sources):
 
-    contents = [
-        source["content"]
-        for source in sources
-    ]
+    trust_scores = []
 
-    similarities = []
+    for source in sources:
+        trust_scores.append(source["trust_score"])
 
-    for i in range(len(contents)):
-        for j in range(i + 1, len(contents)):
+    average = sum(trust_scores) / len(trust_scores)
 
-            emb1 = model.encode(
-                contents[i]
-            )
-
-            emb2 = model.encode(
-                contents[j]
-            )
-
-            similarity = util.cos_sim(
-                emb1,
-                emb2
-            )
-
-            similarities.append(
-                similarity.item()
-            )
-
-    average_similarity = (
-        sum(similarities) / len(similarities)
-    )
-
-    consensus_score = round(
-        average_similarity * 100,
-        2
-    )
+    consensus_score = round((average / 5) * 100, 2)
 
     if consensus_score >= 80:
         agreement = "High"
