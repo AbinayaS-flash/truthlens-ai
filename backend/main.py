@@ -7,11 +7,11 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "https://truthlens-ai-omega.vercel.app",
-    "https://truthlens-ai-git-main-supernova-projects.vercel.app"
-],
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "https://truthlens-9n46wyz70-supernova-projects1.vercel.app",
+        "https://truthlens-ai-omega.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
