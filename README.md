@@ -17,7 +17,7 @@ Technology Stack:
   Version Control: Git, GitHub
 
 Team:
- Abinaya S
- Pavithra K
- Vijaya Sri M S
+ Abinaya S,
+ Pavithra K,
+ Vijaya Sri M S,
  Pooja S
