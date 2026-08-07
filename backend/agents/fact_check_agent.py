@@ -1,38 +1,64 @@
-from difflib import SequenceMatcher
+from sentence_transformers import util
+from agents.model_loader import model
 
 
 def fact_check(answer, sources):
 
     source_text = ""
 
+
     for source in sources:
+
         source_text += source["content"] + " "
 
 
-    similarity = SequenceMatcher(
-        None,
+
+    answer_embedding = model.encode(
         answer,
-        source_text
-    ).ratio()
+        convert_to_tensor=True
+    )
 
 
-    score = round(
+    source_embedding = model.encode(
+        source_text,
+        convert_to_tensor=True
+    )
+
+
+    similarity = util.cos_sim(
+        answer_embedding,
+        source_embedding
+    ).item()
+
+
+
+    similarity = round(
         similarity * 100,
         2
     )
 
 
-    if score >= 80:
+
+    if similarity >= 80:
+
         status = "Verified"
 
-    elif score >= 60:
+
+    elif similarity >= 60:
+
         status = "Partially Supported"
 
+
     else:
+
         status = "Unsupported claim detected"
 
 
+
     return {
-        "fact_check_score": score,
+
+        "fact_check_score": similarity,
+
         "fact_check_status": status
+
     }

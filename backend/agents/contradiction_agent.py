@@ -1,4 +1,5 @@
-from difflib import SequenceMatcher
+from sentence_transformers import util
+from agents.model_loader import model
 
 
 def detect_contradiction(sources):
@@ -11,33 +12,37 @@ def detect_contradiction(sources):
         )
 
 
-    if len(contents) < 2:
-        return "Not enough sources to compare"
-
-
     similarities = []
 
 
     for i in range(len(contents)):
+
         for j in range(i + 1, len(contents)):
 
-            score = SequenceMatcher(
-                None,
-                contents[i],
-                contents[j]
-            ).ratio()
+            similarity = util.cos_sim(
+                model.encode(contents[i]),
+                model.encode(contents[j])
+            )
 
-            similarities.append(score)
+
+            similarities.append(
+                similarity.item()
+            )
 
 
     average_similarity = sum(similarities) / len(similarities)
 
 
     if average_similarity > 0.8:
+
         return "High agreement"
 
+
     elif average_similarity > 0.6:
+
         return "Moderate agreement"
 
+
     else:
+
         return "Possible contradictions detected"

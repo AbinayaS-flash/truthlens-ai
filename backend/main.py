@@ -2,16 +2,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from graph.workflow import graph
 
-
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174"
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 
@@ -25,11 +26,9 @@ def home():
 @app.get("/truthlens")
 def truthlens(query: str):
     try:
-        result = graph.invoke({
+        return graph.invoke({
             "query": query
         })
-
-        return result
 
     except Exception as e:
         import traceback
