@@ -1,11 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.graph.workflow import graph
-
-
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,8 +20,10 @@ def home():
 
 @app.get("/truthlens")
 def truthlens(query: str):
-
     try:
+        # Load the graph only when the endpoint is called
+        from backend.graph.workflow import graph
+
         result = graph.invoke(
             {
                 "query": query
@@ -35,7 +33,6 @@ def truthlens(query: str):
         return result
 
     except Exception as e:
-
         return {
             "error": str(e)
         }
