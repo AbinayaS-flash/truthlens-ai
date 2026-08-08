@@ -12,13 +12,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.get("/api")
 def home():
     return {
         "message": "TruthLens AI running"
     }
-
+@app.get("/api/test")
+def test():
+    return {
+        "message": "API test route works"
+    }
 
 @app.get("/api/truthlens")
 def truthlens(query: str):
