@@ -1,45 +1,67 @@
-from sentence_transformers import util
-from backend.agents.model_loader import get_model
+from groq import Groq
+from dotenv import load_dotenv
+import os
+import json
+
+load_dotenv()
+
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
 
 
 def detect_contradiction(sources):
 
+    if not sources:
+        return "No sources available"
+
     contents = []
 
     for source in sources:
-        contents.append(
-            source["content"]
+        contents.append(source["content"])
+
+    source_text = "\n\n--- SOURCE ---\n\n".join(contents)
+
+    prompt = f"""
+Analyze the following sources and determine whether they agree or contradict each other.
+
+Sources:
+{source_text}
+
+Return ONLY valid JSON:
+
+{{
+    "status": "High agreement",
+    "reason": "short explanation"
+}}
+
+Possible status values:
+- High agreement
+- Moderate agreement
+- Possible contradictions detected
+"""
+
+    try:
+
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0
         )
 
-    similarities = []
+        result = json.loads(
+            response.choices[0].message.content
+        )
 
-    # Load the model only when this function is actually called
-    model = get_model()
+        return result["status"]
 
-    for i in range(len(contents)):
+    except Exception as e:
 
-        for j in range(i + 1, len(contents)):
+        print("Contradiction detection error:", e)
 
-            similarity = util.cos_sim(
-                model.encode(contents[i]),
-                model.encode(contents[j])
-            )
-
-            similarities.append(
-                similarity.item()
-            )
-
-    # Handle cases where there are fewer than 2 sources
-    if not similarities:
-        return "Not enough sources to determine agreement"
-
-    average_similarity = sum(similarities) / len(similarities)
-
-    if average_similarity > 0.8:
-        return "High agreement"
-
-    elif average_similarity > 0.6:
-        return "Moderate agreement"
-
-    else:
-        return "Possible contradictions detected"
+        return "Unable to determine agreement"
