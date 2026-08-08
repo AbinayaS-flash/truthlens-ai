@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.graph.workflow import graph
+
 app = FastAPI()
 
 app.add_middleware(
@@ -11,28 +13,26 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+@app.get("/api")
 def home():
     return {
         "message": "TruthLens AI running"
     }
 
 
-@app.get("/truthlens")
+@app.get("/api/truthlens")
 def truthlens(query: str):
     try:
-        # Load the graph only when the endpoint is called
-        from backend.graph.workflow import graph
-
-        result = graph.invoke(
-            {
-                "query": query
-            }
-        )
+        result = graph.invoke({
+            "query": query
+        })
 
         return result
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
+
         return {
             "error": str(e)
         }

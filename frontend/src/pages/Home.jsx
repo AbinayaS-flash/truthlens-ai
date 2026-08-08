@@ -52,7 +52,7 @@ function Home() {
     }
 
     const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/truthlens`,
+      `/api/truthlens`,
       {
         params: { query },
       }
