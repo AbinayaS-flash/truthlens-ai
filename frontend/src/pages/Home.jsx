@@ -57,6 +57,9 @@ function Home() {
         params: { query },
       }
     );
+    console.log("TRUTHLENS API RESPONSE:", response.data);
+    console.log("CONFIDENCE:", response.data.confidence);
+    console.log("CONFIDENCE TYPE:", typeof response.data.confidence);
 
     setCurrentStep(4);
     await new Promise((r) => setTimeout(r, 300));

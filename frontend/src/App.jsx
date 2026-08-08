@@ -6,7 +6,6 @@ import Home from "./pages/Home";
 import ForgotPassword from "./pages/ForgotPassword";
 import ProtectedRoute from "./pages/ProtectedRoute";
 
-
 function App() {
   return (
     <BrowserRouter>

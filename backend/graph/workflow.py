@@ -1,17 +1,17 @@
 from langgraph.graph import StateGraph, END
 
-from graph.state import TruthLensState
+from backend.graph.state import TruthLensState
 
-from agents.search_agent import search_sources
-from agents.verify_agent import verify_sources
-from agents.answer_agent import generate_answer
-from agents.hallucination_agent import detect_hallucination
-from agents.contradiction_agent import detect_contradiction
-from agents.consensus_agent import calculate_consensus
-from agents.fact_check_agent import fact_check
-from agents.bias_agent import detect_bias
-from agents.confidence_agent import calculate_confidence
-from agents.explanation_agent import explain
+from backend.agents.search_agent import search_sources
+from backend.agents.verify_agent import verify_sources
+from backend.agents.answer_agent import generate_answer
+from backend.agents.hallucination_agent import detect_hallucination
+from backend.agents.contradiction_agent import detect_contradiction
+from backend.agents.consensus_agent import calculate_consensus
+from backend.agents.fact_check_agent import fact_check
+from backend.agents.bias_agent import detect_bias
+from backend.agents.confidence_agent import calculate_confidence
+from backend.agents.explanation_agent import explain
 
 
 def search_node(state):

@@ -1,4 +1,4 @@
-from agents.source_rank_agent import rank_source
+from backend.agents.source_rank_agent import rank_source
 
 
 def verify_sources(results):

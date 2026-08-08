@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from graph.workflow import graph
+from backend.graph.workflow import graph
 
 app = FastAPI()
 

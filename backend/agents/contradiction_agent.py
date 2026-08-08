@@ -36,6 +36,7 @@ Return ONLY valid JSON:
 }}
 
 Possible status values:
+
 - High agreement
 - Moderate agreement
 - Possible contradictions detected
@@ -54,11 +55,36 @@ Possible status values:
             temperature=0
         )
 
-        result = json.loads(
-            response.choices[0].message.content
-        )
+        content = response.choices[0].message.content.strip()
 
-        return result["status"]
+        print("Contradiction agent response:")
+        print(content)
+
+        try:
+
+            result = json.loads(content)
+
+            return result.get(
+                "status",
+                "Unable to determine agreement"
+            )
+
+        except json.JSONDecodeError:
+
+            print("Invalid JSON returned by Groq")
+
+            text = content.lower()
+
+            if "high agreement" in text:
+                return "High agreement"
+
+            elif "moderate agreement" in text:
+                return "Moderate agreement"
+
+            elif "possible contradictions" in text:
+                return "Possible contradictions detected"
+
+            return "Unable to determine agreement"
 
     except Exception as e:
 
