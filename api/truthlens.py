@@ -13,7 +13,7 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+@app.get("/api/truthlens")
 def truthlens(query: str):
     try:
         result = graph.invoke({
